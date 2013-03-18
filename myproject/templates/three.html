@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+
+<head>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+  <title>
+    Legacy
+    </title>
+  </head>
+
+    <!--------------------------------------------------------------------- Style --------------------------------------------------------------------------------------------------------->
+    <style type="text/css">
+      
+      body {
+            background-image: url('https://nscnt12.nsc.gov.tw/ttt/images/body_bg.jpg');
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  background-repeat: repeat-x;
+            /*background-color: #E7FBF8;
+            background-image: url('http://www.animalswallpapers.org/wp-content/uploads/2011/09/Sky-Wallpaper.jpg');
+            background-attachment: fixed;
+            background-size: 100% 100%;*/
+      z-index: -5000;
+      text-align: center;
+      }
+        
+        div.container {
+            margin: 20px auto 0px auto;
+            width: 1001px;
+            min-height: 500px;
+            border: 1px outset silver;
+            -webkit-box-shadow: 0 10px 9px -9px silver;
+      -moz-box-shadow: 0 10px 9px -9px silver;
+      box-shadow: 0 10px 9px -9px silver;
+            overflow: hidden;
+            background-color: white;
+            text-align: center;
+        }
+        
+        div.leftSide {
+            width: 300px;
+            min-height: 500px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            text-align: center;
+            float: left;
+            /*border-right: 1px solid silver;*/
+        }
+        
+        div.rightContainer {
+            height: 430px;
+            width: 100%;
+            background-color: ;
+            border-bottom: 1px solid silver;
+        }
+        
+        div.rightSide{
+            width: 700px;
+            min-height: 500px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            text-align: center;
+            float: left;
+            border-left: 1px solid silver;
+        }
+        
+        div.rightFloat {
+            text-align: center;
+            float: left;
+            width: 350px;
+            background-color: ;
+        }
+
+        /* Display X-Pos and Y-Pos */
+      .infoBox {
+      width: 170px;
+      height: 22px;
+      margin: 15px auto 10px auto;
+      background-color: ;
+            
+      }
+      
+        /* Droppable 1*/
+      .dropBox {
+      height: 300px;
+      width: 300px;
+      margin: 40px auto 0px auto;
+      /*background-color: #E7FBF8;*/
+background-image: url('http://www.ractoc.com/flux/assets/Textures/blue-circle-gradient.png');
+  background-attachment:fixed;
+  background-size: 85% 100%;
+      opacity: 0.8;
+      border: 1px solid gray;
+      z-index: 3;
+            -moz-border-radius: 200px 200px 200px 200px / 200px 200px 200px 200px;
+      border-radius: 200px 200px 200px 200px / 200px 200px 200px 200px;
+      
+      }
+        
+        /* Droppable 2*/
+      .dropBox2 {
+      height: 300px;
+      width: 300px;
+      margin: 40px auto 0px auto;
+      /*background-color: #E7FBF8;*/
+      background-image: url('http://www.ractoc.com/flux/assets/Textures/red-circle-gradient.png');
+  background-attachment:fixed;
+  background-size: 120% 100%;
+      opacity: 0.8;
+      border: 1px solid gray;
+      z-index: 3;
+            -moz-border-radius: 200px 200px 200px 200px / 200px 200px 200px 200px;
+      border-radius: 200px 200px 200px 200px / 200px 200px 200px 200px;
+      
+      }
+        
+        /********************************************************************************************************************************************************* Fortran Droppable */
+        .fDropBox {
+            z-index: 4;
+            min-height: 35px;
+            width: 100px;
+            /*background-color: #E7FBF8;*/
+      background-image: url('http://www.lettersmarket.com/uploads/lettersmarket/demo/background_gradient_basic/background_gradient_orange_23/background_gradient_orange_23_jpg_max.jpg');
+  background-attachment:fixed;
+  background-size: 100%;
+            margin: 15px auto 5px auto;
+            -moz-border-radius: 2px 2px 2px 2px / 2px 2px 2px 2px;
+      border-radius: 2px 2px 2px 2px / 2px 2px 2px 2px;
+            border: 1px outset gray;
+            line-height: 100%;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-bottom: 15px;
+            -moz-box-shadow: 0 5px 5px -5px silver;
+      box-shadow: 0 5px 5px -5px silver;
+            /*box-shadow: 1px 1px 2px #888;*/
+        }
+        
+        /* Square Result */
+        div.resultBox {
+            width: 270px;
+            height: 35px;
+            margin: 10px auto;
+            background-color: ;
+        }
+        
+        /* Container holding dragNum */
+        div.triBox{
+            width:250px;
+            min-height: 70px;
+            background-color: ;
+            margin: 0px auto 0px auto;
+            z-index: -4000;
+        }
+        
+        /* Container for sqrDrag */
+        .sqrBox {
+            background-color: ;
+            height: 35px;
+            width: 140px;
+            top: -5px;
+            text-align: center;
+            float: right;
+        }
+        
+        /* result of square draggable */
+        .sqrDrag {
+            border: 1px solid black;
+            -moz-border-radius: 3px 3px 3px 3px / 3px 3px 3px 3px;
+      border-radius: 3px 3px 3px 3px / 3px 3px 3px 3px;
+            box-shadow: 1px 1px 3px #888;
+            float: left;
+            height: 30px;
+      background-color: ;
+            top: -5px;
+            text-align: center;
+            font-size: 24px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        
+        .sqrDrag:hover {
+      border: 1px solid #04B404;
+      box-shadow: 0 0 2px 2px #04B404;
+      }
+        
+        /* Container for addDrag */
+        .addBox {
+            background-color: ;
+            height: 35px;
+            width: 150px;
+            top: -5px;
+            text-align: center;
+            float: right;
+        }
+        
+        /* result of add draggable */
+        .addDrag {
+            border: 1px solid black;
+            -moz-border-radius: 3px 3px 3px 3px / 3px 3px 3px 3px;
+      border-radius: 3px 3px 3px 3px / 3px 3px 3px 3px;
+            box-shadow: 1px 1px 3px #888;
+            float: left;
+            height: 30px;
+            top: -5px;
+      background-color: ;
+            text-align: center;
+            font-size: 24px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        
+        .addDrag:hover {
+      border: 1px solid #04B404;
+      box-shadow: 0 0 2px 2px #04B404;
+      }
+      
+        /* numbers */
+      .numDrag {
+            margin: 5px;
+      height: 50px;
+      width: 70px;
+      -moz-border-radius: 3px 3px 3px 3px / 3px 3px 3px 3px;
+      border-radius: 3px 3px 3px 3px / 3px 3px 3px 3px;
+      background-color: ;
+  /*    background-image: url('http://www.lettersmarket.com/uploads/lettersmarket/demo/background_gradient_basic/background_gradient_orange_23/background_gradient_orange_23_jpg_max.jpg') no-repeat;
+  background-attachment: fixed;
+  background-size: 100%;*/
+      opacity: 0.8;
+      text-align: center;
+      z-index: 5;
+      border: 1px solid black;
+      font-size: 36px;
+            box-shadow: 1px 1px 3px #888;
+            float: left;
+      }
+      
+      .numDrag-ui.draggable-dragging {
+      border: 1px solid black;
+      
+      }
+      
+      .numDrag:hover {
+      border: 1px solid #04B404;
+      box-shadow: 0 0 2px 2px #04B404;
+      }
+      
+      .hovered {
+            box-shadow: 0 0 1px 1px black;
+            background-image: url('http://www.ractoc.com/flux/assets/Textures/green-circle-gradient.png');
+      }
+
+      .hovered2 {
+            box-shadow: 0 0 1px 1px black;
+          background-image: url('http://www.ractoc.com/flux/assets/Textures/yellow-circle-gradient.png');
+      }
+        
+        /* bottom layer */
+        div.bottomLayerRight {
+            width: 200px;
+            background-color: ;
+            float: right;
+            margin-top: 10px;
+        }
+        
+        div.bottomLayerLeft {
+            width: 490px;
+            background-color: ;
+            float: left;
+            min-height: 100px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-right: 1px solid silver;
+            margin-bottom: -20px;
+        }
+
+      div.bText{
+          min-height: 10px;
+          text-align: left;
+          background-color:;
+          border-top: 1px solid black;
+          padding-top: 15px;
+      }
+      
+      </style>
+    <!------------------------------------------------------------------------------------- End Style -------------------------------------------------------------------------------------------->
+    
+    <!------------------------------------------------------------------------------------ JQuery and Ajax ---------------------------------------------------------------------------------------->
+    <script type="text/javascript">
+       
+        var count = '0';
+        $( init );
+         
+        /* Initial Function when page is loaded */
+        function init() {
+            var count = '0';
+          $('.sqrDrag').hide();
+          $('.addDrag').hide();
+            
+          $('.numDrag').draggable({
+            containment: 'window',
+            cursor: 'move',
+            start: handleDragStart,
+            stop: handleDragStop,
+            drag: handleDragDrag,
+            revert: true,
+            addClasses: true,
+          });
+            
+          $('.sqrDrag').draggable({
+            containment: 'window',
+            cursor: 'move',
+            start: handleDragStart,
+            stop: handleDragStop,
+            drag: handleDragDrag,
+            revert: true,
+            addClasses: true,
+          });
+            
+          $('.addDrag').draggable({
+            containment: 'window',
+            cursor: 'move',
+            start: handleDragStart,
+            stop: handleDragStop,
+            drag: handleDragDrag,
+            revert: true,
+            addClasses: true,
+          });
+          
+          $('.dropBox').droppable({
+            start: handleDragStart,
+            drop: handleDropEvent,
+            out: outEvent,
+            over: overEvent,
+            hoverClass: 'hovered2',
+          });
+        
+          $('.dropBox2').droppable({
+            start: handleDragStart,
+            drop: handleDropEvent2,
+            out: outEvent2,
+            over: overEvent2,
+            hoverClass: 'hovered',
+          });
+          /**************************************************************************************************************************************fortran droppable*/
+          $('.fDropBox').droppable({
+            start: handleDragStart,
+            drop: fHandleDropEvent,
+            out: fOutEvent,
+            over: fOverEvent,
+            tolerance: 'touch',
+          });
+        }
+        
+        
+        function handleDragStart(event, ui) {
+            $(".dropBox").text('Drop Here To Square Number!' );
+            $(".dropBox").prepend('</br></br></br></br></br></br>');
+            $(".dropBox2").text('Drop Here To Add Number!' );
+            $(".dropBox2").prepend('</br></br></br></br></br></br>');
+            $(".fDropBox").text('Fibonacci!');
+            $(".fDropBox").prepend('');
+            $(".fDropBox").animate({width: '100px',
+                                   minHeight: '35px',
+                                   backgroundColor: '#E7FBF8F'
+                                   }, 800, afterAnimationOut(event,ui));
+        }
+        
+        /* DropBox 1 Events*/
+        function handleDropEvent(event, ui) {
+             var draggable = ui.draggable;
+            $('.sqrDrag').show();
+             $(".dropBox").text('Block "' + draggable.attr('name') + '" was dropped on me!' );
+             $(".dropBox").prepend('</br></br></br></br></br>');
+            $(".dropBox").append('</br></br>' + draggable.attr('name') + ' * ' + draggable.attr('name') + '</br>|</br>|</br>|</br>|</br>|</br>V');
+            $.ajax({
+                   url:"/legacy/sqr/" + draggable.attr('name') + "/",
+                   type: "GET",
+                   success: function(response){
+                   
+                       if(response >= 0) {
+                           $(".sqrDrag").attr('name', response);
+                           $(".sqrDrag").text(response);
+                       }
+                       else{
+                           alert('The Number ' + draggable.attr('name') + ' * ' + draggable.attr('name') + ' is too big to be displayed.');
+                           $(".dropBox").text('Drop Here To Square Number!' );
+                           $(".dropBox").prepend('</br></br></br></br></br></br>');
+                       }
+                   },
+                   error: function(response){
+                   return null;
+                   },
+            
+            })
+        }
+        
+        function outEvent(event, ui) {
+            var draggable = ui.draggable;
+            $(".dropBox").text('Drop Here!' );
+            $(".dropBox").prepend('</br></br></br></br></br></br>');
+        }
+        
+        function overEvent(event, ui) {
+            var draggable = ui.draggable;
+             $(".dropBox").text('Block "' + draggable.attr('name') + '" is hovering over me!' );
+             $(".dropBox").prepend('</br></br></br></br></br></br>');
+        }
+        /* End DropBox 1 Events*/
+        
+        /* DropBox 2 Events*/
+        function handleDropEvent2(event, ui) {
+            var draggable = ui.draggable;
+            $('.addDrag').show();
+            $(".dropBox2").text('Block "' + draggable.attr('name') + '" was dropped on me!' );
+            $(".dropBox2").prepend('</br></br></br></br></br>');
+            $(".dropBox2").append('</br></br>' + count + ' + ' + draggable.attr('name') + '</br>|</br>|</br>|</br>|</br>|</br>V');
+            
+            /* AJAX */
+            $.ajax({
+                   url:"/legacy/add/" + draggable.attr('name') + "/" + count + "/",
+                   /*url:"/add/" + draggable.attr('name') + "/",*/
+                   type: "GET",
+                   success: function(response){
+                       
+                       if (response >= 0) {
+                           $(".addDrag").attr('name', response);
+                           $(".addDrag").text(response);
+                           count = response;
+                       }
+                       else {
+                           alert('The Number ' + count + ' + ' + draggable.attr('name') + ' is too big to be displayed.');
+                           $(".dropBox2").text('Drop Here To Add Number!' );
+                           $(".dropBox2").prepend('</br></br></br></br></br></br>');
+                       }
+                   },
+                   error: function(response){
+                   return null;
+                   },
+                   
+                   })
+        }
+        
+        function outEvent2(event, ui) {
+            var draggable = ui.draggable;
+            $(".dropBox2").text('Drop Here!' );
+            $(".dropBox2").prepend('</br></br></br></br></br></br>');
+        }
+        
+        function overEvent2(event, ui) {
+            var draggable = ui.draggable;
+            $(".dropBox2").text('Block "' + draggable.attr('name') + '" is hovering over me!' );
+            $(".dropBox2").prepend('</br></br></br></br></br></br>');
+        }
+        /* End DropBox 2 Events*/
+        
+        /********************************************************************************************** DropBox Fortran Events*/
+        function fHandleDropEvent(event, ui) {
+            var draggable = ui.draggable;
+	    if (parseInt(draggable.attr('name')) > 60) {
+                  $(".fDropBox").text('Sorry, cannot display more than 60 Fibonacci numbers...' );
+	          $(".fDropBox").prepend('</br>');
+                  $('.fDropBox').append("</br></br><img src = 'http://jainricha.files.wordpress.com/2010/01/sad-face-small.jpg'>");
+                  return null;
+	       }
+	
+            $(".fDropBox").text('Here are the first "' + draggable.attr('name') + '" numbers of Fibonacci!' );
+            $(".fDropBox").prepend('</br>');
+            /*$(".fDropBox").append('</br></br>|</br>|</br>|</br>V');*/
+            $(".fDropBox").append("</br></br><div class ='bText'></div>");
+            $.ajax({
+                   url:"/legacy/fib/" + draggable.attr('name') + "/",
+                   type: "GET",
+                   success: function(response){
+                   $(".bText").text(response);
+                   },
+                   error: function(response){
+                   return null;
+                   },
+                   
+                   })
+        }
+        
+        function fOutEvent(event, ui) {
+            $(".fDropBox").animate({width: '100px',
+                                   minHeight: '35px',
+                                   backgroundColor: '#E7FBF8F'
+                                   }, 800, afterAnimationOut(event,ui));
+        }
+        
+        function fOverEvent(event, ui) {
+            $(".fDropBox").animate({width: '420px',
+                                   minHeight: '200px',
+                                   backgroundColor: '#E7FBF8'
+                                   }, 800, afterAnimationOver(event,ui));
+        }
+        
+        function afterAnimationOver(event, ui){
+            var draggable = ui.draggable;
+            $(".fDropBox").text('Drop here for first "' + draggable.attr('name') + '" numbers of Fibonacci!' );
+            $(".fDropBox").prepend('</br>');
+        }
+        
+        function afterAnimationOut(event, ui){
+            var draggable = ui.draggable;
+            $(".fDropBox").text('Fibonacci!' );
+            $(".fDropBox").prepend('</br>');
+        }
+        
+        function afterAnimationReset() {
+            $(".fDropBox").text('Fibonacci!' );
+            $(".fDropBox").prepend('</br>');
+        }
+        /************************************************************************************************ End DropBox fortran Events*/
+        
+        /* Position of Draggable Div */
+        function handleDragStop( event, ui ) {
+          var offsetXPos = parseInt( ui.offset.left );
+          var offsetYPos = parseInt( ui.offset.top );
+          $(".infoBox").text("X-Pos: ? | Y-Pos: ?");
+        }
+        
+        function handleDragDrag( event, ui ) {
+            var offsetXPos = parseInt( ui.offset.left );
+            var offsetYPos = parseInt( ui.offset.top );
+            $(".infoBox").text("X-Pos: " + offsetXPos + ", Y-Pos: " + offsetYPos);
+        }
+	/* End Position of Draggable Div */
+        
+        function resetResults() {
+	    $('.sqrDrag').text("0");
+            $('.addDrag').text("0");
+            $('.sqrDrag').hide();
+            $('.addDrag').hide();
+            $(".dropBox").text('Drop Here To Square Number!' );
+            $(".dropBox").prepend('</br></br></br></br></br></br>');
+            $(".dropBox2").text('Drop Here To Add Number!' );
+            $(".dropBox2").prepend('</br></br></br></br></br></br>');
+            $(".fDropBox").animate({width: '100px',
+                                   minHeight: '35px',
+                                   backgroundColor: '#E7FBF8F'
+                                   }, 800, afterAnimationReset());
+            count = '0';
+        }
+        
+	</script>
+    <!------------------------------------------------------------------------------------------ End JQuery and Ajax ------------------------------------------------------------------------------------>
+    
+    <!------------------------------------------------------------------------------------------------ HTML ----------------------------------------------------------------------------------------------->
+    <body>
+        <center>
+            <!--CONTAINER -->
+            <div class = "container">
+                
+                <!-- LEFT SIDE-->
+                <div class = "leftSide">
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "0">
+                            <label id = '0'>0</label>
+                        </div>
+                        <div class = "numDrag" name = "1">
+                            <label id = '1'>1</label>
+                        </div>
+                        <div class = "numDrag" name = "2">
+                            <label id = '2'>2</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "3">
+                            <label id = '3'>3</label>
+                        </div>
+                        <div class = "numDrag" name = "4">
+                            <label id = '4'>4</label>
+                        </div>
+                        <div class = "numDrag" name = "5">
+                            <label id = '5'>5</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "6">
+                            <label id = '6'>6</label>
+                        </div>
+                        <div class = "numDrag" name = "7">
+                            <label id = '7'>7</label>
+                        </div>
+                        <div class = "numDrag" name = "8">
+                            <label id = '8'>8</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "9">
+                            <label id = '9'>9</label>
+                        </div>
+                        <div class = "numDrag" name = "10">
+                            <label id = '10'>10</label>
+                        </div>
+                        <div class = "numDrag" name = "11">
+                            <label id = '11'>11</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "12">
+                            <label id = '12'>12</label>
+                        </div>
+                        <div class = "numDrag" name = "13">
+                            <label id = '13'>13</label>
+                        </div>
+                        <div class = "numDrag" name = "14">
+                            <label id = '14'>14</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "15">
+                            <label id = '15'>15</label>
+                        </div>
+                        <div class = "numDrag" name = "16">
+                            <label id = '16'>16</label>
+                        </div>
+                        <div class = "numDrag" name = "17">
+                            <label id = '17'>17</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "18">
+                            <label id = '18'>18</label>
+                        </div>
+                        <div class = "numDrag" name = "19">
+                            <label id = '19'>19</label>
+                        </div>
+                        <div class = "numDrag" name = "20">
+                            <label id = '20'>20</label>
+                        </div>
+                    </div>
+                    Drag A Number To The Right!
+                    
+                </div>
+                <!-- END LEFT SIDE -->
+                
+                <!-- RIGHT SIDE -->
+                <div class = "rightSide">
+                    
+                    <div class = "rightContainer">
+                    
+                        <div class = "rightFloat">
+                            <u>Call C Program "Square"</u>
+                            <div class = "dropBox">
+                                </br></br></br></br></br></br>
+                                Drop Here To Square Number!
+                            </div>
+                            </br>
+                            <div class = "resultBox">
+                                Squared Result:
+                                <div class = "sqrBox">
+                                    <div class = "sqrDrag">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class = "rightFloat">
+                            <u>Call C++ Program "Add"</u>
+                            <div class = "dropBox2">
+                                </br></br></br></br></br></br>
+                                Drop Here To Add Numbers!
+                            </div>
+                            </br>
+                            <div class = "resultBox">
+                                &nbsp;&nbsp;&nbsp;Sum Result:
+                                <div class = "addBox">
+                                    <div class = "addDrag">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class = "bottomLayerRight">
+                        <div class = "infoBox">
+                            X-Pos: ? | Y-Pos: ?
+                        </div>
+                        <input type="button" value="Reset Results" onclick="resetResults();" /> 
+                    </div>
+                    
+                    <div class = "bottomLayerLeft">
+                        <u>Call Fortran Program "Fibonacci"</u>
+                        <div class = "fDropBox">
+                            </br>
+                            Fibonacci!
+                        </div>
+                    </div>
+
+                </div>
+                <!-- END RIGHT SIDE -->
+                
+            </div>
+            <!-- END CONTAINER-->
+        </center>
+	
+	</body>
+<!------------------------------------------------------------------------------------------------ End HTML ----------------------------------------------------------------------------------------------->
+
+</html>

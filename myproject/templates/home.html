@@ -1,0 +1,552 @@
+<!-- Taiwan Tech Trek Summer 2012 @ National Center For High Performance Computing - By: Jonathan Chen Summer 2012 -->
+
+<!DOCTYPE html>
+
+<head>
+    
+    <!-- MUST INCLUDE THIS FOR JQUERY AND AJAX-->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/js/legacy.js"></script>
+    <link rel = "stylesheet" type = "text/css" href = "/static/css/legacy.css" />
+    <link rel = "shortcut icon" type = "image/x-icon" href = "/static/imgs/fav.ico">
+    <title>
+        Legacy
+    </title>
+    
+    </head>
+    
+    <!------------------------------------------------------------------------------------ JQuery and Ajax ---------------------------------------------------------------------------------------->
+    <script type="text/javascript">
+       
+        var count = '0'; // variable for add c++ function, start count at zero to add to first number
+        
+        $( init ); // call this function on page load
+         
+        /* Initial Function when page is loaded */
+        function init() {
+            
+            var count = '0';
+            
+            // JQuery hides the sqr result and the add result
+            $('.sqrDrag').hide();
+            $('.addDrag').hide();
+            
+            /* set up draggable divs */
+            
+            // make the numDrag div draggable
+            $('.numDrag').draggable({
+                containment: 'window', /* drag is limited to window */
+                cursor: 'move', /* draggable moves with cursor */
+                start: handleDragStart, /* call this event when the dragging starts */
+                stop: handleDragStop, /* call this event when the dragging stops */
+                drag: handleDragDrag, /* call this event when div is dragging */
+                revert: true, /* set the draggable to return to original position when released */
+                addClasses: true,
+            });
+            
+            // make the sqrDrag div draggable
+            $('.sqrDrag').draggable({
+                containment: 'window',
+                cursor: 'move',
+                start: handleDragStart,
+                stop: handleDragStop,
+                drag: handleDragDrag,
+                revert: true,
+                addClasses: true,
+            });
+            
+            // make the addDrag div draggable
+            $('.addDrag').draggable({
+                containment: 'window',
+                cursor: 'move',
+                start: handleDragStart,
+                stop: handleDragStop,
+                drag: handleDragDrag,
+                revert: true,
+                addClasses: true,
+            });
+          
+            /* set up droppable divs */
+            
+            // make the dropBox div for C function droppable
+            $('.dropBox').droppable({
+                start: handleDragStart, /* call this event when the dragging starts */
+                drop: handleDropEvent, /* call this event when the draggable div is dropped into this div */
+                out: outEvent, /* call this event when the draggable div is dragged out of this div */
+                over: overEvent, /* call this event when the draggable div is hovering out of this div */
+                hoverClass: 'hovered2', /* when the draggable div is hovering out of this div, can change CSS of DIV */
+            });
+        
+            
+            // make the dropBox2 div for C++ function droppable
+            $('.dropBox2').droppable({
+                start: handleDragStart,
+                drop: handleDropEvent2,
+                out: outEvent2,
+                over: overEvent2,
+                hoverClass: 'hovered',
+            });
+          
+            // make the fDropBox div for Fortran function droppable
+            $('.fDropBox').droppable({
+                start: handleDragStart,
+                drop: fHandleDropEvent,
+                out: fOutEvent,
+                over: fOverEvent,
+                tolerance: 'touch', /* means that this droppable div reacts on first touch by draggable */
+            });
+            
+        } // end init function
+        
+        
+        // when dragging starts event
+        function handleDragStart(event, ui) {
+            
+            // change C function dropbox
+            $(".dropBox").text('Drop Here To Square Number!' );
+            $(".dropBox").prepend('</br></br></br></br></br></br>');
+            
+            // change C++ function dropbox
+            $(".dropBox2").text('Drop Here To Add Number!' );
+            $(".dropBox2").prepend('</br></br></br></br></br></br>');
+            
+            // change fortran function dropbox
+            $(".fDropBox").text('Fibonacci!');
+            $(".fDropBox").prepend('');
+            $(".fDropBox").animate({width: '100px', minHeight: '35px', backgroundColor: '#E7FBF8F'}, 800, afterAnimationOut(event,ui));
+            
+        }// end dragging start
+        
+        /* DropBox 1 for C Function Events*/
+        
+        // when draggable is dropped into C droppable
+        function handleDropEvent(event, ui) {
+            
+            var draggable = ui.draggable; // get the draggable div
+            $('.sqrDrag').show(); // show the result div
+            
+            // change droppable text
+            $(".dropBox").text('Block "' + draggable.attr('name') + '" was dropped on me!' );
+            $(".dropBox").prepend('</br></br></br></br></br>');
+            $(".dropBox").append('</br></br>' + draggable.attr('name') + ' * ' + draggable.attr('name') + '</br>|</br>|</br>|</br>|</br>|</br>V');
+            
+            // AJAX: sends data to server, where django and python are
+            // Python returns this: return HttpResponse(simplejson.dumps(_sqr.sqr(int(num))), mimetype="application/json")
+            $.ajax({
+                   
+                url:"/legacy/sqr/" + draggable.attr('name') + "/", /* url where you can pass in variables to django and python */
+                type: "GET", /* define type 'GET' or 'POST' */
+                
+                /* if ajax is succesful, the return value from python is 'response' */
+                success: function(response){
+                   
+                   if(response >= 0) {
+                        $(".sqrDrag").attr('name', response);
+                        $(".sqrDrag").text(response);
+                   }
+                   else{
+                        alert('The Number ' + draggable.attr('name') + ' * ' + draggable.attr('name') + ' is too big to be displayed.');
+                        $(".dropBox").text('Drop Here To Square Number!' );
+                        $(".dropBox").prepend('</br></br></br></br></br></br>');
+                   }
+                },
+                   
+                /* if ajax fails */
+                error: function(response){
+                   return null;
+                },
+            
+            }) // end AJAX
+            
+        } // end drop event for C function
+        
+        /* When draggable div is dragged out of this C function droppable */
+        function outEvent(event, ui) {
+            var draggable = ui.draggable;
+            $(".dropBox").text('Drop Here!' );
+            $(".dropBox").prepend('</br></br></br></br></br></br>');
+        } // end outEvent
+        
+        /* When draggable div is dragged over of this C function droppable */
+        function overEvent(event, ui) {
+            var draggable = ui.draggable;
+             $(".dropBox").text('Block "' + draggable.attr('name') + '" is hovering over me!' );
+             $(".dropBox").prepend('</br></br></br></br></br></br>');
+        } // end overEvent
+        
+        /* End DropBox 1 Events*/
+        
+        /* DropBox 2 Events*/
+        
+        // when draggable is dropped into C++ droppable
+        function handleDropEvent2(event, ui) {
+            
+            var draggable = ui.draggable;
+            $('.addDrag').show();
+            
+            $(".dropBox2").text('Block "' + draggable.attr('name') + '" was dropped on me!' );
+            $(".dropBox2").prepend('</br></br></br></br></br>');
+            $(".dropBox2").append('</br></br>' + count + ' + ' + draggable.attr('name') + '</br>|</br>|</br>|</br>|</br>|</br>V');
+            
+            // ajax
+            $.ajax({
+                url:"/legacy/add/" + draggable.attr('name') + "/" + count + "/",
+                type: "GET",
+                success: function(response){
+                       
+                   if (response >= 0) {
+                        $(".addDrag").attr('name', response);
+                        $(".addDrag").text(response);
+                        count = response;
+                   }
+                   else {
+                        alert('The Number ' + count + ' + ' + draggable.attr('name') + ' is too big to be displayed.');
+                        $(".dropBox2").text('Drop Here To Add Number!' );
+                        $(".dropBox2").prepend('</br></br></br></br></br></br>');
+                   }
+                   
+                },
+                   
+                error: function(response){
+                   return null;
+                },
+                   
+            }) // end ajax
+            
+        } // end drop event for C++ function  
+        
+        /* When draggable div is dragged out of this C++ function droppable */
+        function outEvent2(event, ui) {
+            var draggable = ui.draggable;
+            $(".dropBox2").text('Drop Here!' );
+            $(".dropBox2").prepend('</br></br></br></br></br></br>');
+        } // end outEvent2
+        
+        /* When draggable div is dragged out of this C++ function droppable */
+        function overEvent2(event, ui) {
+            var draggable = ui.draggable;
+            $(".dropBox2").text('Block "' + draggable.attr('name') + '" is hovering over me!' );
+            $(".dropBox2").prepend('</br></br></br></br></br></br>');
+        } // end overEvent2
+        
+        /* End DropBox 2 Events*/
+        
+        /* DropBox Fortran Events*/
+        
+        // when draggable is dropped into FORTRAN droppable
+        function fHandleDropEvent(event, ui) {
+            
+            var draggable = ui.draggable;
+            
+            // Check if draggable is larger than 60 and displays message
+            if (parseInt(draggable.attr('name')) > 60) {
+                
+                $(".fDropBox").text('Sorry, cannot display more than 60 Fibonacci numbers...' );
+                $(".fDropBox").prepend('</br>');
+                $('.fDropBox').append("</br></br><img src = 'http://jainricha.files.wordpress.com/2010/01/sad-face-small.jpg'>");
+                return null;
+                
+            } // end if
+	
+            $(".fDropBox").text('Here are the first "' + draggable.attr('name') + '" numbers of Fibonacci!' );
+            $(".fDropBox").prepend('</br>');
+            $(".fDropBox").append("</br></br><div class ='bText'></div>");
+            
+            $.ajax({
+                   
+                url:"/legacy/fib/" + draggable.attr('name') + "/",
+                type: "GET",
+                success: function(response){$(".bText").text(response);},
+                error: function(response){return null;},
+                   
+            })
+            
+        } // end drop event for Fortran function 
+        
+        /* When draggable div is dragged out of this Fortran function droppable */
+        function fOutEvent(event, ui) {
+            $(".fDropBox").animate({width: '100px', minHeight: '35px', backgroundColor: '#E7FBF8F'}, 800, afterAnimationOut(event,ui));
+        }
+        
+        /* When draggable div is dragged over this Fortran function droppable */
+        function fOverEvent(event, ui) {
+            $(".fDropBox").animate({width: '420px', minHeight: '200px', backgroundColor: '#E7FBF8'}, 800, afterAnimationOver(event,ui));
+        }
+        
+        // Helper functions to display messages after JQuery animation is finished for each event type
+        
+        function afterAnimationOver(event, ui){
+            var draggable = ui.draggable;
+            $(".fDropBox").text('Drop here for first "' + draggable.attr('name') + '" numbers of Fibonacci!' );
+            $(".fDropBox").prepend('</br>');
+        }
+        
+        function afterAnimationOut(event, ui){
+            var draggable = ui.draggable;
+            $(".fDropBox").text('Fibonacci!' );
+            $(".fDropBox").prepend('</br>');
+        }
+        
+        function afterAnimationReset() {
+            $(".fDropBox").text('Fibonacci!' );
+            $(".fDropBox").prepend('</br>');
+        }
+        
+        /* End DropBox fortran Events */
+        
+        /* Position of Draggable Div */
+        
+        // reset position when draggable is stopped */
+        function handleDragStop( event, ui ) {
+            var offsetXPos = parseInt( ui.offset.left );
+            var offsetYPos = parseInt( ui.offset.top );
+            $(".infoBox").text("X-Pos: ? | Y-Pos: ?");
+        } // end handleDragStop
+        
+        // show position of draggable div when dragging */
+        function handleDragDrag( event, ui ) {
+            var offsetXPos = parseInt( ui.offset.left );
+            var offsetYPos = parseInt( ui.offset.top );
+            $(".infoBox").text("X-Pos: " + offsetXPos + ", Y-Pos: " + offsetYPos);
+        }
+        
+        /* End Position of Draggable Div */
+        
+        // When reset button is pushed, reset all results
+        function resetResults() {
+            
+            $('.sqrDrag').text("0");
+            $('.addDrag').text("0");
+            $('.sqrDrag').hide();
+            $('.addDrag').hide();
+            
+            $(".dropBox").text('Drop Here To Square Number!' );
+            $(".dropBox").prepend('</br></br></br></br></br></br>');
+            
+            $(".dropBox2").text('Drop Here To Add Number!' );
+            $(".dropBox2").prepend('</br></br></br></br></br></br>');
+            
+            $(".fDropBox").animate({width: '100px', minHeight: '35px', backgroundColor: '#E7FBF8F'}, 800, afterAnimationReset());
+            count = '0';
+            
+        }
+        
+	</script>
+   <!------------------------------------------------------------------------------------------ End JQuery and Ajax ------------------------------------------------------------------------------------>
+    
+
+    <!------------------------------------------------------------------------------------------------ HTML ----------------------------------------------------------------------------------------------->
+    <body>
+        <center>
+            <!--CONTAINER -->
+            <div class = "container">
+                
+                <!-- LEFT SIDE-->
+                <div class = "leftSide">
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "0">
+                            <label id = '0'>0</label>
+                        </div>
+                        <div class = "numDrag" name = "1">
+                            <label id = '1'>1</label>
+                        </div>
+                        <div class = "numDrag" name = "2">
+                            <label id = '2'>2</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "3">
+                            <label id = '3'>3</label>
+                        </div>
+                        <div class = "numDrag" name = "4">
+                            <label id = '4'>4</label>
+                        </div>
+                        <div class = "numDrag" name = "5">
+                            <label id = '5'>5</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "6">
+                            <label id = '6'>6</label>
+                        </div>
+                        <div class = "numDrag" name = "7">
+                            <label id = '7'>7</label>
+                        </div>
+                        <div class = "numDrag" name = "8">
+                            <label id = '8'>8</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "9">
+                            <label id = '9'>9</label>
+                        </div>
+                        <div class = "numDrag" name = "10">
+                            <label id = '10'>10</label>
+                        </div>
+                        <div class = "numDrag" name = "11">
+                            <label id = '11'>11</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "12">
+                            <label id = '12'>12</label>
+                        </div>
+                        <div class = "numDrag" name = "13">
+                            <label id = '13'>13</label>
+                        </div>
+                        <div class = "numDrag" name = "14">
+                            <label id = '14'>14</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "15">
+                            <label id = '15'>15</label>
+                        </div>
+                        <div class = "numDrag" name = "16">
+                            <label id = '16'>16</label>
+                        </div>
+                        <div class = "numDrag" name = "17">
+                            <label id = '17'>17</label>
+                        </div>
+                    </div>
+                    
+                    <div class = "triBox">
+                        <div class = "numDrag" name = "18">
+                            <label id = '18'>18</label>
+                        </div>
+                        <div class = "numDrag" name = "19">
+                            <label id = '19'>19</label>
+                        </div>
+                        <div class = "numDrag" name = "20">
+                            <label id = '20'>20</label>
+                        </div>
+                    </div>
+                    Drag A Number To The Right!
+                    
+                </div>
+                <!-- END LEFT SIDE -->
+                
+                <!-- RIGHT SIDE -->
+                <div class = "rightSide">
+                    
+                    <!-- RIGHT CONTAINER -->
+                    <div class = "rightContainer">
+                    
+                        <!-- RIGHT FLOAT -->
+                        <div class = "rightFloat">
+                            
+                            <u>Call C Program "Square"</u>
+                            
+                            <!-- C function dropbox -->
+                            <div class = "dropBox">
+                                </br></br></br></br></br></br>
+                                Drop Here To Square Number!
+                            </div>
+                            <!-- END C function dropbox -->
+                            
+                            </br>
+                            
+                            <!-- C function result box -->
+                            <div class = "resultBox">
+                                
+                                Squared Result:
+                                
+                                <div class = "sqrBox">
+                                    
+                                    <div class = "sqrDrag">
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            <!-- END C function result box -->
+                            
+                        </div>
+                        <!-- END RIGHT FLOAT -->
+                        
+                         <!-- RIGHT FLOAT -->
+                        <div class = "rightFloat">
+                            
+                            <u>Call C++ Program "Add"</u>
+                            
+                            <!-- C++ function dropbox -->
+                            <div class = "dropBox2">
+                                
+                                </br></br></br></br></br></br>
+                                Drop Here To Add Numbers!
+                                
+                            </div>
+                            <!-- END C++ function dropbox -->
+                            
+                            </br>
+                            
+                            <!-- C++ function result box -->
+                            <div class = "resultBox">
+                                
+                                &nbsp;&nbsp;&nbsp;Sum Result:
+                                
+                                <div class = "addBox">
+                                    
+                                    <div class = "addDrag">
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            <!-- END C++ function result box -->
+                            
+                        </div>
+                         <!-- END RIGHT FLOAT -->
+                        
+                    </div>
+                    <!-- RIGHT CONTAINER -->
+
+                    <!-- BOTTOM RIGHT -->
+                    <div class = "bottomLayerRight">
+                        
+                        <div class = "infoBox">
+                            X-Pos: ? | Y-Pos: ?
+                        </div>
+                        
+                        <input type="button" value="Reset Results" onclick="resetResults();" />
+                        
+                    </div>
+                    <!-- END BOTTOM RIGHT CONTAINER -->
+                    
+                    <!-- BOTTOM LEFT CONTAINER -->
+                    <div class = "bottomLayerLeft">
+                        
+                        <u>Call Fortran Program "Fibonacci"</u>
+                        
+                        <!-- Fortran Dropbox -->
+                        <div class = "fDropBox">
+                            </br>
+                            Fibonacci!
+                        </div>
+                        <!-- END fortran Dropbox -->
+                        
+                    </div>
+                    <!-- END BOTTOM LEFT CONTAINER -->
+
+                </div>
+                <!-- END RIGHT SIDE -->
+                
+            </div>
+            <!-- END CONTAINER-->
+	    
+	    </br>
+	    <a href = "http://www.taiwantechtrek.com">Home</a> | Taiwan Tech Trek Final Presentation - Summer 2012 By: Jonathan ChaoChin Chen
+
+        </center>
+	
+	</body>
+<!------------------------------------------------------------------------------------------------ End HTML ----------------------------------------------------------------------------------------------->
+
+</html>
